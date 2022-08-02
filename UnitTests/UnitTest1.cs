@@ -83,5 +83,21 @@ namespace UnitTests
                  order.InsertOrderItem(new()))
                     .Should().Throw<OrderItemsNullException>();
         }
+
+        [Fact]
+        public void should_throw_OrderItemsNullException_when_order_change_status_to_shipment()
+        {
+            var order = new Order("test2", "tr-1234546");
+            
+            order.InsertOrderItem(new() {
+                new (1500,"peoduct1"),
+                new (1500,"peoduct2"),
+                new (1500,"peoduct3"),
+            });
+
+            FluentActions.Invoking(() =>
+                 order.Shipment("test address"))
+                    .Should().Throw<OrderStatusNotFinalizedException>();
+        }
     }
 }
