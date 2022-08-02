@@ -3,7 +3,7 @@
 namespace Domain
 {
     [Serializable]
-    internal class OrderStatusNotFinalizedException : Exception
+    public class OrderStatusNotFinalizedException : Exception
     {
         public OrderStatusNotFinalizedException()
         {
