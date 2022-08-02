@@ -85,7 +85,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void should_throw_OrderItemsNullException_when_order_change_status_to_shipment()
+        public void should_throw_orderStatusNotFinalizedException_when_order_change_status_to_shipment()
         {
             var order = new Order("test2", "tr-1234546");
             
