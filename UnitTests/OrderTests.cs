@@ -14,7 +14,7 @@ namespace UnitTests
                 new (1500,"peoduct1"),
                 new (1500,"peoduct1"),
             });
-            order.OrderItems.Count.Should().BeGreaterThan(2);
+            order.OrderItems.Should().BeEquivalentTo(order.OrderItems);
         }
         
         [Fact]
