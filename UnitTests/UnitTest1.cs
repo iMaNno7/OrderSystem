@@ -57,6 +57,7 @@ namespace UnitTests
                  order.InsertOrderItem(orderItems))
                     .Should().Throw<OrderAlreadyDeliveredException>();
         }
+
         [Fact]
         public void should_throw_OrderAlreadyDeliveredException_when_add_order_items()
         {
@@ -72,6 +73,15 @@ namespace UnitTests
             FluentActions.Invoking(() =>
                  order.AddItem(new(1500, "peoduct-update1")))
                     .Should().Throw<OrderAlreadyDeliveredException>();
+        }
+
+        [Fact]
+        public void should_throw_OrderItemsNullException_when_create_order()
+        {
+            var order = new Order("test2", "tr-1234546");            
+            FluentActions.Invoking(() =>
+                 order.InsertOrderItem(new()))
+                    .Should().Throw<OrderItemsNullException>();
         }
     }
 }

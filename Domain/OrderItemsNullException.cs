@@ -3,7 +3,7 @@
 namespace Domain
 {
     [Serializable]
-    internal class OrderItemsNullException : Exception
+    public class OrderItemsNullException : Exception
     {
         public OrderItemsNullException()
         {
