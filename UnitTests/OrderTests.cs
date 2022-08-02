@@ -9,12 +9,13 @@ namespace UnitTests
         public void should_insert_order_items()
         {
             var order = new Order("test2", "tr-1234546");
-            order.InsertOrderItem(new() {
+            var items = new List<OrderItem>() {
                 new (1500,"peoduct1"),
                 new (1500,"peoduct1"),
                 new (1500,"peoduct1"),
-            });
-            order.OrderItems.Should().BeEquivalentTo(order.OrderItems);
+            };
+            order.InsertOrderItem(items);
+            order.OrderItems.Should().BeEquivalentTo(items);
         }
         
         [Fact]
