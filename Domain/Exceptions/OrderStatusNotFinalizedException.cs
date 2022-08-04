@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Domain
+namespace Domain.Exceptions
 {
     [Serializable]
     public class OrderStatusNotFinalizedException : Exception
