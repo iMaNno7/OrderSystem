@@ -2,6 +2,7 @@ using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
 using FluentAssertions;
+using UnitTests.Builder;
 using Xunit.Abstractions;
 
 namespace UnitTests
@@ -11,62 +12,87 @@ namespace UnitTests
         [Fact]
         public void Should_throw_orderAlreadyDeliveredException_when_update_order_items()
         {
-            var items =new List<OrderItem>() {
-                new (1500,"peoduct1",1),
-                new (1500,"peoduct2",1),
-                new (1500,"peoduct3",1),
+            var items = new List<OrderItem>() {
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
             };
-            var order = new Order("test2", items);
-            order.FinalizeOrder();
             var orderItems = new List<OrderItem>(){
-                new (1500,"peoduct-update1",1),
-                new (1500,"peoduct-update2",1),
-                new (1500,"peoduct-update3",1),
-            };
-            
-            FluentActions.Invoking(() =>
-                 order.AddOrderItems(orderItems))
-                    .Should().Throw<OrderAlreadyDeliveredException>();
-        }
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),            };
 
-        [Fact]
-        public void should_throw_OrderAlreadyDeliveredException_when_add_order_items()
-        {
-            var items = new List<OrderItem>() {
-                new (1500,"peoduct1",1),
-                new (1500,"peoduct2",1),
-                new (1500,"peoduct3",1),
-            };
-            var order = new Order("test2", items);
+            var order = new OrderBuilder().WithUsername("IMAN").WithOrderItems(items).Build();
             order.FinalizeOrder();
-            order.ShipmentOrder("iran -1");            
+            var addOrderItem = () =>
+                 order.AddOrderItems(orderItems);
 
-            FluentActions.Invoking(() =>
-                 order.AddOrderItems(new List<OrderItem>() { new(1500, "peoduct-update1", 2) }))
-                    .Should().Throw<OrderAlreadyDeliveredException>();
+            addOrderItem.Should().Throw<OrderAlreadyDeliveredException>();
         }
 
         [Fact]
-        public void should_throw_OrderItemsNullException_when_create_order()
-{
-            FluentActions.Invoking(() =>
-                 new Order("test2", new()))
-                    .Should().Throw<OrderItemsNullException>();
-        }
-
-        [Fact]
-        public void should_throw_orderStatusNotFinalizedException_when_order_change_status_to_shipment()
+        public void Should_Throw_OrderAlreadyDeliveredException_When_Add_Order_Items()
         {
             var items = new List<OrderItem>() {
-                new (1500,"peoduct1",1),
-                new (1500,"peoduct2",1),
-                new (1500,"peoduct3",1),
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
             };
-            var order = new Order("test2", items);
+            var order = new OrderBuilder().WithUsername("iman").WithOrderItems(items).Build();
 
-            FluentActions.Invoking(() =>
-                 order.ShipmentOrder("test address"))
+            order.FinalizeOrder();
+            order.ShipmentOrder("iran -1");
+
+            var addOrderItems = () =>
+                 order.AddOrderItems(items);
+
+            addOrderItems.Should().Throw<OrderAlreadyDeliveredException>();
+        }
+
+        [Fact]
+        public void Should_Throw_OrderItemsNullException_When_Create_Order()
+        {
+            var order = () => new OrderBuilder().WithUsername("iman")
+                .WithOrderItems(new()).Build();
+
+            order.Should().Throw<OrderItemsNullException>();
+        }
+
+        [Fact]
+        public void Should_Throw_OrderStatusNotFinalizedException_When_Order_Change_Status_To_Shipment()
+        {
+            var items = new List<OrderItem>() {
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
+                new OrderItemBuilder().Build(),
+            };
+
+            var order = new OrderBuilder()
+                .WithOrderItems(items)
+                .WithUsername("test2").Build();
+
+            var shipmentOrder = () =>
+                 order.ShipmentOrder("test address");
+
+            shipmentOrder
                     .Should().Throw<OrderStatusNotFinalizedException>();
+        }
+
+        [Theory]
+        [InlineData(4)]
+        [InlineData(0)]
+        [InlineData(-2)]
+        public void Should_Throw_OrderItemCountException_When_Create_Order(int cout)
+        {
+            var items = new List<OrderItem>() {
+                new OrderItemBuilder().WithCount(cout).Build(),
+            };
+            var createOrder =()=> new OrderBuilder()
+                .WithOrderItems(items)
+                .WithUsername("test2").Build();
+
+            createOrder
+                    .Should().Throw<OrderItemCountException>();
         }
     }
 }

@@ -2,41 +2,64 @@ using Domain;
 using Domain.Entities;
 using Domain.Exceptions;
 using FluentAssertions;
+using UnitTests.Builder;
 
 namespace UnitTests
 {
     public class HappyOrderTests:TestBase
     {
+
         [Fact]
-        public void should_insert_order_items()
+        public void Endorse_Order_Status_Is_Created()
         {
-            var items = new List<OrderItem>() {
-                new (1500,"peoduct1",2),
-                new (1500,"peoduct1",1),
-                new (1500,"peoduct1",3),
+            var orderItemBuilder = new OrderItemBuilder();            
+            
+            var order = new OrderBuilder()
+                .WithUsername("iman")
+                .WithOrderItems()
+                .Build();
+
+            order.Status.Should().Be(OrderStatus.Created);
+        }
+
+        [Fact]
+        public void Endorse_Order_Item_Is_Created()
+        {
+            var orderItemBuilder  = new OrderItemBuilder();
+            var items = new List<OrderItem>() { 
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
             };
-            var order = new Order("test2", items);
+            var order = new OrderBuilder()
+                .WithUsername("iman")
+                .WithOrderItems(items).Build();
             order.OrderItems.Should().BeEquivalentTo(items);
         }
         
         [Fact]
-        public void should_update_order_items()
+        public void Endorse_Update_Order_Items()
         {
-            var items=new List<OrderItem>(){
-                new (1500,"peoduct1",1),
-                new (1500,"peoduct2",2),
-                new (1500,"peoduct3",3),
+            var orderItemBuilder = new OrderItemBuilder();
+            
+            var items = new List<OrderItem>() {
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
             };
-            var order = new Order("test2",items);
+            
+            var order= new OrderBuilder()
+                .WithUsername("iman")
+                .WithOrderItems(items).Build();
 
-            var orderItems = new List<OrderItem>(){
-                new (1500,"peoduct-update1",1),
-                new (1500,"peoduct-update2",2),
-                new (1500,"peoduct-update3",3),
+            var NewItems = new List<OrderItem>() {
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
+                orderItemBuilder.Build(),
             };
-            order.AddOrderItems(orderItems);
+            order.AddOrderItems(NewItems);
 
-            order.OrderItems.Should().BeEquivalentTo(orderItems);
+            order.OrderItems.Should().BeEquivalentTo(NewItems);
         }
 
     }
