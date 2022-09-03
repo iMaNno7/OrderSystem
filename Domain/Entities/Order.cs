@@ -4,6 +4,10 @@ namespace Domain.Entities
 {
     public class Order
     {
+        private Order()
+        {
+        }
+        public Guid Id { get; set; }
         public string Username { get; private set; }
         public string? Address { get; private set; }
         public Guid TrackingCode { get; private set; }
