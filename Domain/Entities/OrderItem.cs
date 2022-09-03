@@ -1,8 +1,19 @@
 ﻿namespace Domain.Entities
 {
-    public record class OrderItem(int Price, string Title, int Count)
+    public class OrderItem
     {
+        private OrderItem() { }
+
+        public OrderItem(int price, string title, int count)
+        {
+            Price = price;
+            Title = title;
+            Count = count;
+        }        
         public int Id { get; set; }
+        public string Title { get; set; }
+        public int Price { get; set; }
+        public int Count { get; set; }
     }
 
 }

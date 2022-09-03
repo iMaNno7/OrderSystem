@@ -1,8 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using WebApp.Filter;
+using WebApp.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseInMemoryDatabase("orderDb");
+});
+builder.Services.AddControllers(opt =>
+{
+    opt.Filters.Add(typeof(ApiExceptionFilter));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -16,19 +26,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-app.UseEndpoints(s =>
-{
-    s.MapControllers();
-    s.MapDefaultControllerRoute();
-    s.MapRazorPages();
-});
+app.MapControllers();
 
 app.Run();
