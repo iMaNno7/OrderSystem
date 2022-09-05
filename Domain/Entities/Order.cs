@@ -1,21 +1,30 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Contract;
+using Domain.Exceptions;
 
 namespace Domain.Entities
 {
     public class Order
     {
+        private readonly IMessageService _messageService;
+
+        private Order() {
+        }
+        public int Id { get; set; }
         public string Username { get; private set; }
         public string? Address { get; private set; }
         public Guid TrackingCode { get; private set; }
         public OrderStatus Status { get; private set; }
         public List<OrderItem> OrderItems { get; private set; }
 
-        public Order(string username, List<OrderItem> orderItem)
+        public Order(string username, List<OrderItem> orderItem, IMessageService messageService)
         {
             Username = username;
             TrackingCode = Guid.NewGuid();
             Status = OrderStatus.Created;
             AddOrderItems(orderItem);
+
+            _messageService = messageService;
+            _messageService.SendMessage(username);
         }
 
         public void AddOrderItems(List<OrderItem> orderItems)

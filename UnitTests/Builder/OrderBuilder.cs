@@ -1,5 +1,7 @@
-﻿using Domain.Entities;
+﻿using Domain.Contract;
+using Domain.Entities;
 using GenFu;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,13 @@ namespace UnitTests.Builder
     public  class OrderBuilder
     {
         private string _username;
+        private IMessageService _messageService;
         private List<OrderItem> _orderItems;
 
         public OrderBuilder()
         {
             _orderItems = new();
+            _messageService = Substitute.For<IMessageService>();
         }
 
         public OrderBuilder WithUsername(string username)
@@ -24,12 +28,18 @@ namespace UnitTests.Builder
             return this;
         }
 
+        public OrderBuilder WithMessageService(IMessageService messageService)
+        {
+            _messageService = messageService;
+            return this;
+        }
+
         public OrderBuilder WithOrderItems(List<OrderItem> orderItems= null)
         {
             _orderItems = orderItems ?? new() {
-                A.New<OrderItem>(new(1000,"",2)),
-                A.New<OrderItem>(new(500,"",2)),
-                A.New<OrderItem>(new(800,"",2)),
+                new(1000,"",2),
+                new(500,"",2),
+                new(800,"",2),
             };
             return this;
         }
@@ -40,6 +50,6 @@ namespace UnitTests.Builder
             return this;
         }
 
-        public Order Build() => new Order(_username, _orderItems);
+        public Order Build() => new Order(_username, _orderItems,_messageService);
     }
 }

@@ -1,9 +1,13 @@
 using Domain;
+using Domain.Contract;
 using Domain.Entities;
 using Domain.Exceptions;
 using FluentAssertions;
+using Moq;
 using UnitTests.Builder;
+using UnitTests.Factories;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace UnitTests
 {
@@ -56,6 +60,20 @@ namespace UnitTests
                 .WithOrderItems(new()).Build();
 
             order.Should().Throw<OrderItemsNullException>();
+        }
+        
+        [Fact]
+        public void Should_Find_Order_By_OrderId()
+        {
+            var mock = new Mock<IOrderRepository>();
+            mock.Setup(x => x.GetById(It.IsAny<int>())).Returns(()=> {
+                throw new OrderNotFoundException();
+            });
+            IOrderRepository orderRepository = mock.Object;
+            
+            var getById=()=> orderRepository.GetById(5);
+
+            getById.Should().Throw<OrderNotFoundException>();
         }
 
         [Fact]
